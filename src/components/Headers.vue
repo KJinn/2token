@@ -1,13 +1,17 @@
 <template>
     <div class="head">
-        <Menu mode="horizontal" :theme="light" active-name="1">
-            <MenuItem name="1">
+        <Menu mode="horizontal" active-name="1">
+            <MenuItem name="1" to="/">
                 <Icon type="ios-paper" />
-                内容管理
+                首页
             </MenuItem>
             <MenuItem name="Doc" to="Doc">
                 <Icon type="ios-people" />
                 文档
+            </MenuItem>
+            <MenuItem name="Testchart" to="testchart">
+                <Icon type="ios-paper"/>
+                测试
             </MenuItem>
             <Submenu name="3">
                 <template slot="title">
@@ -35,7 +39,14 @@
 <script>
     export default {
         name: 'Headers',
-        components: {}
+        components: {},
+        watch: {
+            '$route' (to, from) {
+                /*if (to === '/') {
+                    alert(1)
+                }*/
+            }
+        }
     }
 </script>
 <style scoped lang="scss">

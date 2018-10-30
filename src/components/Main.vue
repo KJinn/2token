@@ -1,8 +1,8 @@
 <template>
     <div class="wrapper">
 
-        <div id="a">
-            <!--<Table :columns="columns1" :data="data1"></Table>-->
+        <!--<div id="a">
+            &lt;!&ndash;<Table :columns="columns1" :data="data1"></Table>&ndash;&gt;
             <template>
                 <Menu active-name="1-2" :open-names="['1']">
                     <Submenu name="1">
@@ -44,15 +44,9 @@
                     </Submenu>
                 </Menu>
             </template>
-            <template>
-                <Slider v-model="value1"></Slider>
-                <Slider v-model="value2" range></Slider>
-                <Slider v-model="value3" range disabled></Slider>
-            </template>
 
-        </div>
+        </div>-->
         <div id="b">
-            <!--<highstock :options="options" ref="highcharts"></highstock>-->
             <div id="chart"></div>
 
         </div>
@@ -64,13 +58,14 @@
 </template>
 
 <script>
+    import HighCharts from 'highcharts';
+    import SideNav from './Headers.vue'
     export default {
         name: 'Main',
         components: {
         },
         data() {
             return {
-                theme1: 'light',
                 chart:null,
                 options:{
                     rangeSelector: {
@@ -159,8 +154,7 @@
         },
         mounted:function () {
             this.getData();
-            this.chart = HighCharts.chart('chart', this.options);
-//            this.showData();
+            this.showData();
             this.addPoint();
         },
         methods:{
@@ -177,7 +171,9 @@
                 });
             },
             showData(){
-//                let chart = HighCharts.chart('chart', this.options);
+                setTimeout(()=>{
+                    this.chart = HighCharts.chart('chart', this.options);
+                },0);
             },
             addPoint(){
 //                let i = 0;

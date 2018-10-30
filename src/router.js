@@ -3,10 +3,11 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Main from './components/Main.vue'
 import Doc from './components/Doc.vue'
+import testchart from './components/testchart.vue'
 
-Vue.use(Router)
+Vue.use(Router);
 
-export default new Router({
+const router = new Router({
     routes: [
         {
             path: '/',
@@ -19,6 +20,11 @@ export default new Router({
             component: Doc
         },
         {
+            path: '/testchart',
+            name: 'testchart',
+            component: testchart
+        },
+        {
             path: '/about',
             name: 'about',
             // route level code-splitting
@@ -27,4 +33,7 @@ export default new Router({
             component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
         }
     ]
-})
+});
+
+export default router;
+
