@@ -47,8 +47,17 @@
 
         </div>-->
         <div id="b">
-            <div id="chart"></div>
+            <Card>
+                <p slot="title">选择展示的数据量（条）</p>
+                <RadioGroup v-model="length" type="button" @on-change="getData(length)">
+                    <Radio label="100"></Radio>
+                    <Radio label="200"></Radio>
+                    <Radio label="500"></Radio>
+                    <Radio label="1000"></Radio>
+                </RadioGroup>
+            </Card>
 
+            <div id="chart"></div>
         </div>
         <div id="c">
             <!--<Table :columns="columns1" :data="data1"></Table>-->
@@ -60,14 +69,19 @@
 <script>
     import HighCharts from 'highcharts';
     import SideNav from './Headers.vue'
+    import Doc from './Doc.vue'
+
     export default {
         name: 'Main',
         components: {
+            Doc
         },
         data() {
             return {
+                data:[],
                 chart:null,
-                options:{
+                length:'100'
+                /*options:{
                     rangeSelector: {
                         selected: 2
                     },
@@ -149,38 +163,107 @@
                         address: 'Ottawa No. 2 Lake Park',
                         date: '2016-10-04'
                     }
-                ]
+                ]*/
             }
         },
         mounted:function () {
             this.getData();
-            this.showData();
             this.addPoint();
         },
         methods:{
-            getData(){
-                const _this = this;
-                this.axios.get('https://data.jianshukeji.com/stock/history/000001').then((response) => {//表格数据
-                    response.data.data.forEach(function (value,index) {
-//                        console.log(value[0]);
-//                        console.log(value[5]);
-//                        _this.data_.push([value[5],value[0]]);
-//                        lineCharts.pushSeries([value[5],value[0]]);
-//                        lineCharts.series[0].setData(_this.data);
+            getData(name=this.length){
+
+                this.axios.get('positions',{
+                    params:{
+                        name:'nx_macd',
+                        account:'bitmex_acc_quantity',
+                        size:name
+                    }
+                }).then((response) => {
+                    this.data = response.data.data.data;
+
+                    let d = [];
+                    this.data.forEach((val,index)=>{
+                        d.push([val.time*1000, val.vol]);
+//                        d.push({y:val.vol,name:val.time});
+                        if (index-0+1 === this.data.length) {
+                            this.showData(d.reverse());
+                        }
                     })
                 });
             },
-            showData(){
-                setTimeout(()=>{
-                    this.chart = HighCharts.chart('chart', this.options);
-                },0);
+            showData(data){
+                this.chart = HighCharts.chart('chart', {
+                    rangeSelector: {
+                        selected: 2
+                    },
+                    title: {
+                        text: '数据'
+                    },
+                    plotOptions: {
+                        series: {
+                            showInLegend: true
+                        }
+                    },
+                    tooltip: {
+                        split: false,
+                        shared: true,
+                        dateTimeLabelFormats: {
+                            millisecond: '%Y-%m-%d %H:%M:%S',
+                            second: '%Y-%m-%d %H:%M:%S',
+                            minute: '%Y-%m-%d %H:%M:%S',
+                            hour: '%Y-%m-%d %H:%M:%S',
+                            day: '%Y-%m-%d %H:%M:%S',
+                            week: '%Y-%m-%d %H:%M:%S',
+                            month: '%Y-%m-%d %H:%M:%S',
+                            year: '%Y-%m-%d %H:%M:%S'
+                        }
+                    },
+                    credits: {
+                        enabled: false     //不显示版权信息
+                    },
+                    xAxis: {
+                        crosshair: {
+                            width: 1,
+                            color: '#ccc',
+                            dashStyle: 'Dash'
+                        },
+//                        endOnTick: true,//是否显示坐标轴最后一个刻度
+                        tickAmount: 6,//刻度总数
+                        type: 'datetime',
+                        dateTimeLabelFormats: {
+                            millisecond: '%Y-%m-%d %H:%M:%S',
+                            second: '%Y-%m-%d %H:%M:%S',
+                            minute: '%Y-%m-%d %H:%M:%S',
+                            hour: '%Y-%m-%d %H:%M:%S',
+                            day: '%Y-%m-%d %H:%M:%S',
+                            week: '%Y-%m-%d %H:%M:%S',
+                            month: '%Y-%m-%d %H:%M:%S',
+                            year: '%Y-%m-%d %H:%M:%S'
+                        }
+                    },
+                    yAxis: {
+                        crosshair: {
+                            width: 1,
+                            color: '#ccc',
+                            dashStyle: 'Dash'
+                        },
+                        title: {
+                            text: null
+                        }
+                    },
+                    series: [{
+                        // type: 'line',
+                        id: '000001',
+                        name: '值',
+                        data: data
+                    }]
+                });
             },
             addPoint(){
-//                let i = 0;
                 setInterval(()=>{
-                    this.chart.series[0].addPoint(Math.ceil(Math.random()*250),true,true);
-//                    i += 1;
-                },1000)
+                    this.getData(name=this.length);
+                },1000 * 60 * 5)
             }
         }
     }
